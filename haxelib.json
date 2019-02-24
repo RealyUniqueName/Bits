@@ -1,0 +1,12 @@
+{
+	"name"         : "bits",
+	"url"          : "https://github.com/RealyUniqueName/Bits",
+	"license"      : "MIT",
+	"tags"         : ["binary", "bitwise", "bits", "flags"],
+	"description"  : "Binary bit flags with unlimited amount of bits.",
+	"version"      : "1.0.0",
+	"releasenote"  : "Initial release",
+	"classPath"    : "src",
+	"contributors" : ["RealyUniqueName"],
+	"dependencies" : {}
+}

@@ -2,19 +2,18 @@ package bits;
 
 /**
  * A sequence of bits of any size.
- * Unlike ordinary `Int` which is 32 or 64 bits depending on a target platform architecture.
  */
-abstract Bits(Data) {
+abstract Bits(Data) from Data to Data {
 	/**
 	 * Create a `bits.Bits` instance using values of `positions` as positions of bits, which should be set to 1.
 	 * E.g. `[0, 2, 7]` will produce `bits.Bits` instance of `10000101`.
 	 * If there is a negative value in `positions` the result is unspecified.
 	 */
 	@:from
-	static public inline function fromPositions(positions:Array<Int>):Bits {
+	static public function fromPositions(positions:Array<Int>):Bits {
 		var bits = new Bits();
 		for(pos in positions) {
-			bits.set(pos);
+			inline bits.set(pos);
 		}
 		return bits;
 	}
@@ -31,14 +30,14 @@ abstract Bits(Data) {
 	 */
 	public function set(pos:Int) {
 		if(pos < Data.CELL_SIZE) {
-			this[0] = this[0] | (1 << pos);
+			this[0] |= (1 << pos);
 		} else {
 			var cell = Std.int(pos / Data.CELL_SIZE);
 			if(this.length <= cell) {
 				this.resize(cell + 1);
 			}
 			var bit = pos - cell * Data.CELL_SIZE;
-			this[cell] = this[cell] | (1 << bit);
+			this[cell] |= (1 << bit);
 		}
 	}
 
@@ -48,14 +47,42 @@ abstract Bits(Data) {
 	 */
 	public function unset(pos:Int) {
 		if(pos < Data.CELL_SIZE) {
-			this[0] = this[0] & ~(1 << pos);
+			this[0] &= ~(1 << pos);
 		} else {
 			var cell = Std.int(pos / Data.CELL_SIZE);
 			if(this.length <= cell) {
 				this.resize(cell + 1);
 			}
 			var bit = pos - cell * Data.CELL_SIZE;
-			this[cell] = this[cell] & ~(1 << bit);
+			this[cell] &= ~(1 << bit);
+		}
+	}
+
+	/**
+	 * Add all ones of `bits` to this instance.
+	 * It's like `this = this | bits`.
+	 */
+	public function add(bits:Bits) {
+		var data = (bits:Data);
+		if(this.length < data.length) {
+			this.resize(data.length);
+		}
+		for(cell in 0...data.length) {
+			this[cell] |= data[cell];
+		}
+	}
+
+	/**
+	 * Remove all ones of `bits` from this instance.
+	 * It's like `this = this & ~bits`.
+	 */
+	public function remove(bits:Bits) {
+		var data = (bits:Data);
+		for(cell in 0...data.length) {
+			if(cell >= this.length) {
+				break;
+			}
+			this[cell] &= ~data[cell];
 		}
 	}
 
@@ -79,7 +106,7 @@ abstract Bits(Data) {
 	 * E.g. returns `true` if `this` is `10010010` and `bits` is `10000010`.
 	 */
 	public function areSet(bits:Bits):Bool {
-		var data:Data = bits.getData();
+		var data = (bits:Data);
 		var has = true;
 		for(cell in 0...data.length) {
 			if(cell < this.length) {
@@ -112,6 +139,13 @@ abstract Bits(Data) {
 	}
 
 	/**
+	 * Create a copy of this instance
+	 */
+	public inline function copy():Bits {
+		return this.copy();
+	}
+
+	/**
 	 * Get string representation of this instance (without leading zeros).
 	 * E.g. `100010010`.
 	 */
@@ -127,8 +161,46 @@ abstract Bits(Data) {
 		return result.substr(result.indexOf('1'));
 	}
 
-	inline function getData():Data {
-		return this;
+	/**
+	 * Merge this instance with `bits`.
+	 * Creates a new `bits.Bits` instance.
+	 */
+	@:op(A | B)
+	public function merge(bits:Bits):Bits {
+		inline function mergeData(a:Data, b:Data):Data {
+			var result = a.copy();
+			for(cell in 0...b.length) {
+				result[cell] |= b[cell];
+			}
+			return result;
+		}
+
+		if(this.length < (bits:Data).length) {
+			return mergeData(bits, this);
+		} else {
+			return mergeData(this, bits);
+		}
+	}
+
+	/**
+	 * Returns an intersection of this instance with `bits`.
+	 * Creates a new `bits.Bits` instance.
+	 */
+	@:op(A & B)
+	public function intersect(bits:Bits):Bits {
+		inline function intersectData(a:Data, b:Data):Data {
+			var result = a.copy();
+			for(cell in 0...a.length) {
+				result[cell] &= b[cell];
+			}
+			return result;
+		}
+
+		if(this.length < (bits:Data).length) {
+			return intersectData(this, bits);
+		} else {
+			return intersectData(bits, this);
+		}
 	}
 }
 
@@ -148,6 +220,10 @@ private abstract Data(Array<Int>) {
 		#else
 			this.resize(newLength);
 		#end
+	}
+
+	public inline function copy():Data {
+		return cast this.copy();
 	}
 
 	@:op([])

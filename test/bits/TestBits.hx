@@ -83,6 +83,96 @@ class TestBits extends utest.Test {
 		Assert.isTrue(bits.isSet(2));
 	}
 
+	function testAdd() {
+		var a = new Bits();
+		a.set(1);
+		a.set(4);
+		var b = new Bits();
+		b.set(3);
+		b.set(100);
+
+		a.add(b);
+
+		Assert.isTrue(a.isSet(1));
+		Assert.isTrue(a.isSet(3));
+		Assert.isTrue(a.isSet(4));
+		Assert.isTrue(a.isSet(100));
+	}
+
+	function testRemove() {
+		var a = new Bits();
+		a.set(1);
+		a.set(60);
+		var b = new Bits();
+		b.set(3);
+		b.set(60);
+		b.set(100);
+
+		a.remove(b);
+
+		Assert.isTrue(a.isSet(1));
+		Assert.isFalse(a.isSet(3));
+		Assert.isFalse(a.isSet(60));
+		Assert.isFalse(a.isSet(100));
+	}
+
+	function testOpOr() {
+		var a = new Bits();
+		a.set(1);
+		a.set(4);
+		var b = new Bits();
+		b.set(3);
+		b.set(100);
+
+		var c = a | b;
+
+		Assert.isTrue(c.isSet(1));
+		Assert.isTrue(c.isSet(3));
+		Assert.isTrue(c.isSet(4));
+		Assert.isTrue(c.isSet(100));
+
+		Assert.isTrue(a.isSet(1));
+		Assert.isFalse(a.isSet(3));
+		Assert.isTrue(a.isSet(4));
+		Assert.isFalse(a.isSet(100));
+
+		Assert.isFalse(b.isSet(1));
+		Assert.isTrue(b.isSet(3));
+		Assert.isFalse(b.isSet(4));
+		Assert.isTrue(b.isSet(100));
+	}
+
+	function testOpAnd() {
+		var a = new Bits();
+		a.set(1);
+		a.set(4);
+		a.set(70);
+		var b = new Bits();
+		b.set(3);
+		b.set(70);
+		b.set(100);
+
+		var c = a & b;
+
+		Assert.isFalse(c.isSet(1));
+		Assert.isFalse(c.isSet(3));
+		Assert.isFalse(c.isSet(4));
+		Assert.isTrue(c.isSet(70));
+		Assert.isFalse(c.isSet(100));
+
+		Assert.isTrue(a.isSet(1));
+		Assert.isFalse(a.isSet(3));
+		Assert.isTrue(a.isSet(4));
+		Assert.isTrue(a.isSet(70));
+		Assert.isFalse(a.isSet(100));
+
+		Assert.isFalse(b.isSet(1));
+		Assert.isTrue(b.isSet(3));
+		Assert.isFalse(b.isSet(4));
+		Assert.isTrue(a.isSet(70));
+		Assert.isTrue(b.isSet(100));
+	}
+
 	// var t:Bool = false;
 	// function testZ(async:utest.Async) {
 	// 	var b = new Bits();
