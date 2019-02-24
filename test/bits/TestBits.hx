@@ -32,6 +32,8 @@ class TestBits extends utest.Test {
 		a.set(31);
 		a.set(50);
 
+		Assert.isTrue(a.areSet([0, 16, 31, 50]));
+
 		var b = new Bits();
 		b.set(0);
 		b.set(31);
@@ -44,6 +46,7 @@ class TestBits extends utest.Test {
 
 		b.unset(512);
 		Assert.isTrue(a.areSet(b));
+
 	}
 
 	function testForEach() {

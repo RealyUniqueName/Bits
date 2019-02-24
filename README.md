@@ -1,9 +1,20 @@
-# Haxe project
+# Bits
 
-This is an example Haxe project scaffolded by Visual Studio Code.
+This lib aims to implement binary bit flags in Haxe with unlimited amount of bits per instance.
 
-Without further changes the structure is following:
+```haxe
+var flags = new bits.Bits();
 
- * `src/Main.hx`: Entry point Haxe source file
- * `build.hxml`: Haxe command line file used to build the project
- * `README.md`: This file
+flags.set(2); // set a bit at position 2 (zero-based)
+flags.set(5);
+
+flags.toString(); // "10010"
+
+flags.isSet(2); // true
+flags.areSet([2, 5]); // true;
+
+flags.set(9999);
+flags.isSet(9999); // true
+```
+
+`bits.Bits` is implemented as an abstract over `Array<Int>`. Each item of that array is used to store 32 flags.
