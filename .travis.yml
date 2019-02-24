@@ -23,5 +23,5 @@ script:
   - haxelib run travix java
   - haxelib run travix cpp
   - haxelib run travix cs
-  - haxelib run travix php
+  - if [ `uname` = "Linux" ]; then haxelib run travix php; fi
 
