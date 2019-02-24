@@ -13,7 +13,7 @@ abstract Bits(Data) from Data to Data {
 	static public function fromPositions(positions:Array<Int>):Bits {
 		var bits = new Bits();
 		for(pos in positions) {
-			inline bits.set(pos);
+			#if haxe4 inline #end bits.set(pos);
 		}
 		return bits;
 	}
@@ -122,8 +122,9 @@ abstract Bits(Data) from Data to Data {
 
 	/**
 	 * Invoke `callback` for each non-zero bit.
+	 * Callback will receive a position (zero-based) of each non-zero bit.
 	 */
-	public inline function forEach(callback:(pos:Int)->Void) {
+	public inline function forEach(callback:Int->Void) {
 		for(cell in 0...this.length) {
 			// `| 0` is required to cast `null` to zero on dynamic platforms
 			var cellValue = this[cell] | 0;
@@ -213,7 +214,7 @@ private abstract Data(Array<Int>) {
 	public inline function new() this = [0];
 
 	public inline function resize(newLength:Int) {
-		#if (eval || js)
+		#if (!haxe4 || eval || js)
 			for(i in this.length...newLength) {
 				this[i] = 0;
 			}

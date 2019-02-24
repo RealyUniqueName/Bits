@@ -57,7 +57,7 @@ class TestBits extends utest.Test {
 		}
 
 		var actual = [];
-		bits.forEach(pos -> actual.push(pos));
+		bits.forEach(function(pos) actual.push(pos));
 
 		Assert.same(expected, actual);
 	}

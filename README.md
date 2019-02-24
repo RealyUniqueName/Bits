@@ -16,6 +16,6 @@ flags.areSet([2, 5]); // true;
 flags.set(9999);
 flags.isSet(9999); // true
 ```
-See `bits.Bits` source code for the full API with comments.
+See [`bits.Bits`](https://github.com/RealyUniqueName/Bits/blob/master/src/bits/Bits.hx) for the full API with comments.
 
 `bits.Bits` is implemented as an abstract over `Array<Int>`. Each item of that array is used to store 32 flags.
