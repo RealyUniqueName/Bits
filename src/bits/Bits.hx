@@ -5,6 +5,20 @@ package bits;
  * Unlike ordinary `Int` which is 32 or 64 bits depending on a target platform architecture.
  */
 abstract Bits(Data) {
+	/**
+	 * Create a `bits.Bits` instance using values of `positions` as positions of bits, which should be set to 1.
+	 * E.g. `[0, 2, 7]` will produce `bits.Bits` instance of `10000101`.
+	 * If there is a negative value in `positions` the result is unspecified.
+	 */
+	@:from
+	static public inline function fromPositions(positions:Array<Int>):Bits {
+		var bits = new Bits();
+		for(pos in positions) {
+			bits.set(pos);
+		}
+		return bits;
+	}
+
 	public inline function new() {
 		this = new Data();
 	}
@@ -67,11 +81,12 @@ abstract Bits(Data) {
 	public function areSet(bits:Bits):Bool {
 		var data:Data = bits.getData();
 		var has = true;
-		for(i in 0...data.length) {
-			if(i < this.length) {
-				has = data[i] == this[i] & data[i];
+		for(cell in 0...data.length) {
+			if(cell < this.length) {
+				has = data[cell] == this[cell] & data[cell];
 			} else {
-				has = 0 == data[i] | 0; // `| 0` is required to cast `null` to zero on dynamic platforms
+				// `| 0` is required to cast `null` to zero on dynamic platforms
+				has = 0 == data[cell] | 0;
 			}
 			if(!has) break;
 		}
@@ -83,41 +98,39 @@ abstract Bits(Data) {
 	 */
 	public inline function forEach(callback:(pos:Int)->Void) {
 		for(cell in 0...this.length) {
-			if(this[cell] == 0) {
+			// `| 0` is required to cast `null` to zero on dynamic platforms
+			var cellValue = this[cell] | 0;
+			if(cellValue == 0) {
 				continue;
 			}
 			for(i in 0...Data.CELL_SIZE) {
-				var bit = this[cell] & (1 << i);
-				if(bit != 0) {
+				if(0 != cellValue & (1 << i)) {
 					callback(cell * Data.CELL_SIZE + i);
 				}
 			}
 		}
 	}
 
-	// inline function iterator():BitsIterator {
-	// 	return new BitsIterator(this);
-	// }
+	/**
+	 * Get string representation of this instance (without leading zeros).
+	 * E.g. `100010010`.
+	 */
+	public function toString():String {
+		var result = '';
+		for(cell in 0...this.length) {
+			// `| 0` is required to cast `null` to zero on dynamic platforms
+			var cellValue = this[cell] | 0;
+			for(i in 0...Data.CELL_SIZE) {
+				result = (0 != cellValue & (1 << i) ? '1' : '0') + result;
+			}
+		}
+		return result.substr(result.indexOf('1'));
+	}
 
 	inline function getData():Data {
 		return this;
 	}
 }
-
-// class BitsIterator {
-// 	var data:Data;
-// 	var cell:Int = 0;
-// 	var i:Int = 0;
-
-// 	@:allow(bits.Bits)
-// 	inline function new(data:Data) {
-// 		this.data = data;
-// 	}
-
-// 	public inline function hasNext():Bool {
-
-// 	}
-// }
 
 //TODO change to the most effective data structure for each target platform
 private abstract Data(Array<Int>) {

@@ -59,6 +59,27 @@ class TestBits extends utest.Test {
 		Assert.same(expected, actual);
 	}
 
+	function testToString() {
+		var bits = new Bits();
+		bits.set(1);
+		bits.set(8);
+		bits.set(32);
+		bits.set(66);
+
+		var expected = '1000000000000000000000000000000000100000000000000000000000100000010';
+		var actual = bits.toString();
+
+		Assert.equals(expected, actual);
+	}
+
+	function testFromPositions() {
+		var bits = Bits.fromPositions([0, 2]);
+
+		Assert.isTrue(bits.isSet(0));
+		Assert.isFalse(bits.isSet(1));
+		Assert.isTrue(bits.isSet(2));
+	}
+
 	// var t:Bool = false;
 	// function testZ(async:utest.Async) {
 	// 	var b = new Bits();
