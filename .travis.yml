@@ -24,6 +24,5 @@ script:
   - haxelib run travix cpp
   - haxelib run travix cs
   - haxelib run travix php
-  - haxelib run travix lua
   - if ! [ "$TRAVIS_HAXE_VERSION" == "3.4.7" ]; haxelib run travix hl; fi
 
