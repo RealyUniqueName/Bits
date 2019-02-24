@@ -214,7 +214,7 @@ private abstract Data(Array<Int>) {
 	public inline function new() this = [0];
 
 	public inline function resize(newLength:Int) {
-		#if (!haxe4 || eval || js)
+		#if (!haxe4 || eval || js || neko || python)
 			for(i in this.length...newLength) {
 				this[i] = 0;
 			}
