@@ -1,0 +1,8 @@
+-cp src
+-cp test
+-lib utest
+-dce full
+-D analyzer-optimize
+-main TestAll
+-debug
+--macro nullSafety('bits', Strict)
