@@ -112,8 +112,7 @@ abstract Bits(Data) from Data to Data {
 			if(cell < this.length) {
 				has = data[cell] == this[cell] & data[cell];
 			} else {
-				// `| 0` is required to cast `null` to zero on dynamic platforms
-				has = 0 == data[cell] | 0;
+				has = 0 == data[cell];
 			}
 			if(!has) break;
 		}
@@ -126,8 +125,7 @@ abstract Bits(Data) from Data to Data {
 	 */
 	public inline function forEach(callback:Int->Void) {
 		for(cell in 0...this.length) {
-			// `| 0` is required to cast `null` to zero on dynamic platforms
-			var cellValue = this[cell] | 0;
+			var cellValue = this[cell];
 			if(cellValue == 0) {
 				continue;
 			}
@@ -153,8 +151,7 @@ abstract Bits(Data) from Data to Data {
 	public function toString():String {
 		var result = '';
 		for(cell in 0...this.length) {
-			// `| 0` is required to cast `null` to zero on dynamic platforms
-			var cellValue = this[cell] | 0;
+			var cellValue = this[cell];
 			for(i in 0...Data.CELL_SIZE) {
 				result = (0 != cellValue & (1 << i) ? '1' : '0') + result;
 			}
@@ -168,8 +165,7 @@ abstract Bits(Data) from Data to Data {
 	public function isEmpty():Bool {
 		var empty = true;
 		for(cell in 0...this.length) {
-			// `| 0` is required to cast `null` to zero on dynamic platforms
-			if(this[cell] | 0 != 0) {
+			if(this[cell] != 0) {
 				empty = false;
 				break;
 			}
@@ -238,7 +234,7 @@ private abstract Data(Array<Int>) {
 	public inline function new() this = [0];
 
 	public inline function resize(newLength:Int) {
-		#if (!haxe4 || eval || js || neko || python)
+		#if (!haxe4 || !static)
 			for(i in this.length...newLength) {
 				this[i] = 0;
 			}
