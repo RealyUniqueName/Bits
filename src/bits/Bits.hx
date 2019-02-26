@@ -163,6 +163,29 @@ abstract Bits(Data) from Data to Data {
 	}
 
 	/**
+	 * Check if all bits are zeros
+	 */
+	public function isEmpty():Bool {
+		var empty = true;
+		for(cell in 0...this.length) {
+			if(this[cell] != 0) {
+				empty = false;
+				break;
+			}
+		}
+		return empty;
+	}
+
+	/**
+	 * Set all bits to 0
+	 */
+	public function clear() {
+		for(cell in 0...this.length) {
+			this[cell] = 0;
+		}
+	}
+
+	/**
 	 * Merge this instance with `bits`.
 	 * Creates a new `bits.Bits` instance.
 	 */

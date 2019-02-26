@@ -75,6 +75,30 @@ class TestBits extends utest.Test {
 		Assert.equals(expected, actual);
 	}
 
+	function testClear() {
+		var bits = new Bits();
+		bits.set(10);
+		bits.set(100);
+		bits.set(1000);
+
+		bits.clear();
+
+		bits.forEach(function(_) Assert.fail());
+		Assert.pass();
+	}
+
+	function testIsEmpty() {
+		var bits = new Bits();
+
+		Assert.isTrue(bits.isEmpty());
+
+		bits.set(999999);
+		Assert.isFalse(bits.isEmpty());
+
+		bits.unset(999999);
+		Assert.isTrue(bits.isEmpty());
+	}
+
 	function testFromPositions() {
 		var bits = Bits.fromPositions([0, 2]);
 
