@@ -168,7 +168,8 @@ abstract Bits(Data) from Data to Data {
 	public function isEmpty():Bool {
 		var empty = true;
 		for(cell in 0...this.length) {
-			if(this[cell] != 0) {
+			// `| 0` is required to cast `null` to zero on dynamic platforms
+			if(this[cell] | 0 != 0) {
 				empty = false;
 				break;
 			}
