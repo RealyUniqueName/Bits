@@ -90,24 +90,24 @@ public function toString():String;
 public function isEmpty():Bool;
 
 /**
-	* Set all bits to 0
-	*/
+ * Set all bits to 0
+ */
 public function clear():Void;
 
 /**
-	* Merge this instance with `bits`.
-	* Creates a new `bits.Bits` instance.
-	*/
+ * Merge this instance with `bits`.
+ * Creates a new `bits.Bits` instance.
+ */
 @:op(A | B) public function merge(bits:Bits):Bits;
 
 /**
-	* Returns an intersection of this instance with `bits`.
-	* Creates a new `bits.Bits` instance.
-	*/
+ * Returns an intersection of this instance with `bits`.
+ * Creates a new `bits.Bits` instance.
+ */
 @:op(A & B) public function intersect(bits:Bits):Bits;
 
 /**
-	* Iterator over the positions of non-zero bits
-	*/
+ * Iterator over the positions of non-zero bits
+ */
 public inline function iterator():BitsIterator;
 ```
