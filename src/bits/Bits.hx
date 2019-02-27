@@ -126,12 +126,11 @@ abstract Bits(Data) from Data to Data {
 	public inline function forEach(callback:Int->Void) {
 		for(cell in 0...this.length) {
 			var cellValue = this[cell];
-			if(cellValue == 0) {
-				continue;
-			}
-			for(i in 0...Data.CELL_SIZE) {
-				if(0 != cellValue & (1 << i)) {
-					callback(cell * Data.CELL_SIZE + i);
+			if(cellValue != 0) {
+				for(i in 0...Data.CELL_SIZE) {
+					if(0 != cellValue & (1 << i)) {
+						callback(cell * Data.CELL_SIZE + i);
+					}
 				}
 			}
 		}
@@ -222,6 +221,50 @@ abstract Bits(Data) from Data to Data {
 		} else {
 			return intersectData(bits, this);
 		}
+	}
+
+	/**
+	 * Iterator over the positions of non-zero bits
+	 */
+	public inline function iterator():BitsIterator {
+		return new BitsIterator(this);
+	}
+}
+
+private class BitsIterator {
+	var data:Data;
+	var cell:Int = 0;
+	var i:Int = 0;
+
+	public inline function new(data:Data) {
+		this.data = data;
+	}
+
+	public inline function hasNext():Bool {
+		var has = false;
+
+		while(cell < data.length) {
+			var cellValue = data[cell];
+
+			while(i < Data.CELL_SIZE) {
+				if(cellValue & (1 << i) != 0) {
+					has = true;
+					break;
+				}
+				++i;
+			}
+			if(has) break;
+
+			i = 0;
+			++cell;
+		}
+
+		return has;
+	}
+
+	public inline function next():Int {
+		++i;
+		return cell * Data.CELL_SIZE + i - 1;
 	}
 }
 

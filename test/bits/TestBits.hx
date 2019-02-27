@@ -62,6 +62,23 @@ class TestBits extends utest.Test {
 		Assert.same(expected, actual);
 	}
 
+	function testIterator() {
+		var bits = new Bits();
+		var expected = [1, 20, 32, 500];
+		for(pos in expected) {
+			bits.set(pos);
+		}
+
+		var actual = [for(pos in bits) pos];
+		Assert.same(expected, actual);
+
+		expected.remove(500);
+		bits.unset(500);
+
+		var actual = [for(pos in bits) pos];
+		Assert.same(expected, actual);
+	}
+
 	function testToString() {
 		var bits = new Bits();
 		bits.set(1);
