@@ -231,7 +231,7 @@ abstract Bits(Data) from Data to Data {
 	}
 }
 
-private class BitsIterator {
+class BitsIterator {
 	var data:Data;
 	var cell:Int = 0;
 	var i:Int = 0;
@@ -246,14 +246,16 @@ private class BitsIterator {
 		while(cell < data.length) {
 			var cellValue = data[cell];
 
-			while(i < Data.CELL_SIZE) {
-				if(cellValue & (1 << i) != 0) {
-					has = true;
-					break;
+			if(cellValue != 0) {
+				while(i < Data.CELL_SIZE) {
+					if(cellValue & (1 << i) != 0) {
+						has = true;
+						break;
+					}
+					++i;
 				}
-				++i;
+				if(has) break;
 			}
-			if(has) break;
 
 			i = 0;
 			++cell;
