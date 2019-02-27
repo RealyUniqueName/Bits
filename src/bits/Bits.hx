@@ -3,7 +3,7 @@ package bits;
 /**
  * A sequence of bits of any size.
  */
-abstract Bits(Data) from Data to Data {
+abstract Bits(BitsData) from BitsData to BitsData {
 	/**
 	 * Create a `bits.Bits` instance using values of `positions` as positions of bits, which should be set to 1.
 	 * E.g. `[0, 2, 7]` will produce `bits.Bits` instance of `10000101`.
@@ -19,7 +19,7 @@ abstract Bits(Data) from Data to Data {
 	}
 
 	public inline function new() {
-		this = new Data();
+		this = new BitsData();
 	}
 
 	/**
@@ -29,14 +29,14 @@ abstract Bits(Data) from Data to Data {
 	 * If `pos` is negative the result is unspecified.
 	 */
 	public function set(pos:Int) {
-		if(pos < Data.CELL_SIZE) {
+		if(pos < BitsData.CELL_SIZE) {
 			this[0] |= (1 << pos);
 		} else {
-			var cell = Std.int(pos / Data.CELL_SIZE);
+			var cell = Std.int(pos / BitsData.CELL_SIZE);
 			if(this.length <= cell) {
 				this.resize(cell + 1);
 			}
-			var bit = pos - cell * Data.CELL_SIZE;
+			var bit = pos - cell * BitsData.CELL_SIZE;
 			this[cell] |= (1 << bit);
 		}
 	}
@@ -46,14 +46,14 @@ abstract Bits(Data) from Data to Data {
 	 * If `pos` is negative the result is unspecified.
 	 */
 	public function unset(pos:Int) {
-		if(pos < Data.CELL_SIZE) {
+		if(pos < BitsData.CELL_SIZE) {
 			this[0] &= ~(1 << pos);
 		} else {
-			var cell = Std.int(pos / Data.CELL_SIZE);
+			var cell = Std.int(pos / BitsData.CELL_SIZE);
 			if(this.length <= cell) {
 				this.resize(cell + 1);
 			}
-			var bit = pos - cell * Data.CELL_SIZE;
+			var bit = pos - cell * BitsData.CELL_SIZE;
 			this[cell] &= ~(1 << bit);
 		}
 	}
@@ -63,7 +63,7 @@ abstract Bits(Data) from Data to Data {
 	 * It's like `this = this | bits`.
 	 */
 	public function add(bits:Bits) {
-		var data = (bits:Data);
+		var data = (bits:BitsData);
 		if(this.length < data.length) {
 			this.resize(data.length);
 		}
@@ -77,7 +77,7 @@ abstract Bits(Data) from Data to Data {
 	 * It's like `this = this & ~bits`.
 	 */
 	public function remove(bits:Bits) {
-		var data = (bits:Data);
+		var data = (bits:BitsData);
 		for(cell in 0...data.length) {
 			if(cell >= this.length) {
 				break;
@@ -91,11 +91,11 @@ abstract Bits(Data) from Data to Data {
 	 * If `pos` is negative the result is unspecified.
 	 */
 	public function isSet(pos:Int):Bool {
-		return if(pos < Data.CELL_SIZE) {
+		return if(pos < BitsData.CELL_SIZE) {
 			0 != this[0] & (1 << pos);
 		} else {
-			var cell = Std.int(pos / Data.CELL_SIZE);
-			var bit = pos - cell * Data.CELL_SIZE;
+			var cell = Std.int(pos / BitsData.CELL_SIZE);
+			var bit = pos - cell * BitsData.CELL_SIZE;
 			cell < this.length && 0 != this[cell] & (1 << bit);
 		}
 	}
@@ -106,7 +106,7 @@ abstract Bits(Data) from Data to Data {
 	 * E.g. returns `true` if `this` is `10010010` and `bits` is `10000010`.
 	 */
 	public function areSet(bits:Bits):Bool {
-		var data = (bits:Data);
+		var data = (bits:BitsData);
 		var has = true;
 		for(cell in 0...data.length) {
 			if(cell < this.length) {
@@ -127,9 +127,9 @@ abstract Bits(Data) from Data to Data {
 		for(cell in 0...this.length) {
 			var cellValue = this[cell];
 			if(cellValue != 0) {
-				for(i in 0...Data.CELL_SIZE) {
+				for(i in 0...BitsData.CELL_SIZE) {
 					if(0 != cellValue & (1 << i)) {
-						callback(cell * Data.CELL_SIZE + i);
+						callback(cell * BitsData.CELL_SIZE + i);
 					}
 				}
 			}
@@ -151,7 +151,7 @@ abstract Bits(Data) from Data to Data {
 		var result = '';
 		for(cell in 0...this.length) {
 			var cellValue = this[cell];
-			for(i in 0...Data.CELL_SIZE) {
+			for(i in 0...BitsData.CELL_SIZE) {
 				result = (0 != cellValue & (1 << i) ? '1' : '0') + result;
 			}
 		}
@@ -187,7 +187,7 @@ abstract Bits(Data) from Data to Data {
 	 */
 	@:op(A | B)
 	public function merge(bits:Bits):Bits {
-		inline function mergeData(a:Data, b:Data):Data {
+		inline function mergeData(a:BitsData, b:BitsData):BitsData {
 			var result = a.copy();
 			for(cell in 0...b.length) {
 				result[cell] |= b[cell];
@@ -195,7 +195,7 @@ abstract Bits(Data) from Data to Data {
 			return result;
 		}
 
-		if(this.length < (bits:Data).length) {
+		if(this.length < (bits:BitsData).length) {
 			return mergeData(bits, this);
 		} else {
 			return mergeData(this, bits);
@@ -208,7 +208,7 @@ abstract Bits(Data) from Data to Data {
 	 */
 	@:op(A & B)
 	public function intersect(bits:Bits):Bits {
-		inline function intersectData(a:Data, b:Data):Data {
+		inline function intersectData(a:BitsData, b:BitsData):BitsData {
 			var result = a.copy();
 			for(cell in 0...a.length) {
 				result[cell] &= b[cell];
@@ -216,7 +216,7 @@ abstract Bits(Data) from Data to Data {
 			return result;
 		}
 
-		if(this.length < (bits:Data).length) {
+		if(this.length < (bits:BitsData).length) {
 			return intersectData(this, bits);
 		} else {
 			return intersectData(bits, this);
@@ -232,11 +232,11 @@ abstract Bits(Data) from Data to Data {
 }
 
 class BitsIterator {
-	var data:Data;
+	var data:BitsData;
 	var cell:Int = 0;
 	var i:Int = 0;
 
-	public inline function new(data:Data) {
+	public inline function new(data:BitsData) {
 		this.data = data;
 	}
 
@@ -247,7 +247,7 @@ class BitsIterator {
 			var cellValue = data[cell];
 
 			if(cellValue != 0) {
-				while(i < Data.CELL_SIZE) {
+				while(i < BitsData.CELL_SIZE) {
 					if(cellValue & (1 << i) != 0) {
 						has = true;
 						break;
@@ -266,12 +266,13 @@ class BitsIterator {
 
 	public inline function next():Int {
 		++i;
-		return cell * Data.CELL_SIZE + i - 1;
+		return cell * BitsData.CELL_SIZE + i - 1;
 	}
 }
 
 //TODO change to the most effective data structure for each target platform
-private abstract Data(Array<Int>) {
+@:noCompletion
+abstract BitsData(Array<Int>) {
 	static public inline var CELL_SIZE = 32;
 
 	public var length(get,never):Int;
@@ -288,7 +289,7 @@ private abstract Data(Array<Int>) {
 		#end
 	}
 
-	public inline function copy():Data {
+	public inline function copy():BitsData {
 		return cast this.copy();
 	}
 
