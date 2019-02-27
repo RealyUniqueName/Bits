@@ -22,97 +22,92 @@ flags.isSet(9999); // true
 
 ```haxe
 /**
- * A sequence of bits of any size.
+ * Create a `bits.Bits` instance using values of `positions` as positions of bits, which should be set to 1.
+ * E.g. `[0, 2, 7]` will produce `bits.Bits` instance of `10000101`.
+ * If there is a negative value in `positions` the result is unspecified.
  */
-abstract Bits {
-	/**
-	 * Create a `bits.Bits` instance using values of `positions` as positions of bits, which should be set to 1.
-	 * E.g. `[0, 2, 7]` will produce `bits.Bits` instance of `10000101`.
-	 * If there is a negative value in `positions` the result is unspecified.
-	 */
-	@:from static public function fromPositions(positions:Array<Int>):Bits;
+@:from static public function fromPositions(positions:Array<Int>):Bits;
 
-	/**
-	 * Set the bit at position `pos` (zero-based) in a binary representation of `bits.BitFlags` to 1.
-	 * It's like `bits = bits | (1 << pos)`
-	 * E.g. if `pos` is 2 the third bit is set to 1 (`0000100`).
-	 * If `pos` is negative the result is unspecified.
-	 */
-	public function set(pos:Int):Void;
+/**
+ * Set the bit at position `pos` (zero-based) in a binary representation of `bits.BitFlags` to 1.
+ * It's like `bits = bits | (1 << pos)`
+ * E.g. if `pos` is 2 the third bit is set to 1 (`0000100`).
+ * If `pos` is negative the result is unspecified.
+ */
+public function set(pos:Int):Void;
 
-	/**
-	 * Set the bit at position `pos` (zero-based) in a binary representation of `bits.BitFlags` to 0.
-	 * If `pos` is negative the result is unspecified.
-	 */
-	public function unset(pos:Int):Void;
+/**
+ * Set the bit at position `pos` (zero-based) in a binary representation of `bits.BitFlags` to 0.
+ * If `pos` is negative the result is unspecified.
+ */
+public function unset(pos:Int):Void;
 
-	/**
-	 * Add all ones of `bits` to this instance.
-	 * It's like `this = this | bits`.
-	 */
-	public function add(bits:Bits):Void;
+/**
+ * Add all ones of `bits` to this instance.
+ * It's like `this = this | bits`.
+ */
+public function add(bits:Bits):Void;
 
-	/**
-	 * Remove all ones of `bits` from this instance.
-	 * It's like `this = this & ~bits`.
-	 */
-	public function remove(bits:Bits):Void;
+/**
+ * Remove all ones of `bits` from this instance.
+ * It's like `this = this & ~bits`.
+ */
+public function remove(bits:Bits):Void;
 
-	/**
-	 * Check if a bit at position `pos` is set to 1.
-	 * If `pos` is negative the result is unspecified.
-	 */
-	public function isSet(pos:Int):Bool;
+/**
+ * Check if a bit at position `pos` is set to 1.
+ * If `pos` is negative the result is unspecified.
+ */
+public function isSet(pos:Int):Bool;
 
-	/**
-	 * Check if this instance has all the corresponding bits of `bits` set.
-	 * It's like `this & bits != 0`.
-	 * E.g. returns `true` if `this` is `10010010` and `bits` is `10000010`.
-	 */
-	public function areSet(bits:Bits):Bool;
+/**
+ * Check if this instance has all the corresponding bits of `bits` set.
+ * It's like `this & bits != 0`.
+ * E.g. returns `true` if `this` is `10010010` and `bits` is `10000010`.
+ */
+public function areSet(bits:Bits):Bool;
 
-	/**
-	 * Invoke `callback` for each non-zero bit.
-	 * Callback will receive a position (zero-based) of each non-zero bit.
-	 */
-	public inline function forEach(callback:Int->Void):Void;
+/**
+ * Invoke `callback` for each non-zero bit.
+ * Callback will receive a position (zero-based) of each non-zero bit.
+ */
+public inline function forEach(callback:Int->Void):Void;
 
-	/**
-	 * Create a copy of this instance
-	 */
-	public inline function copy():Bits;
+/**
+ * Create a copy of this instance
+ */
+public inline function copy():Bits;
 
-	/**
-	 * Get string representation of this instance (without leading zeros).
-	 * E.g. `100010010`.
-	 */
-	public function toString():String;
+/**
+ * Get string representation of this instance (without leading zeros).
+ * E.g. `100010010`.
+ */
+public function toString():String;
 
-	/**
-	 * Check if all bits are zeros
-	 */
-	public function isEmpty():Bool;
+/**
+ * Check if all bits are zeros
+ */
+public function isEmpty():Bool;
 
-	/**
-	 * Set all bits to 0
-	 */
-	public function clear():Void;
+/**
+	* Set all bits to 0
+	*/
+public function clear():Void;
 
-	/**
-	 * Merge this instance with `bits`.
-	 * Creates a new `bits.Bits` instance.
-	 */
-	@:op(A | B) public function merge(bits:Bits):Bits;
+/**
+	* Merge this instance with `bits`.
+	* Creates a new `bits.Bits` instance.
+	*/
+@:op(A | B) public function merge(bits:Bits):Bits;
 
-	/**
-	 * Returns an intersection of this instance with `bits`.
-	 * Creates a new `bits.Bits` instance.
-	 */
-	@:op(A & B) public function intersect(bits:Bits):Bits;
+/**
+	* Returns an intersection of this instance with `bits`.
+	* Creates a new `bits.Bits` instance.
+	*/
+@:op(A & B) public function intersect(bits:Bits):Bits;
 
-	/**
-	 * Iterator over the positions of non-zero bits
-	 */
-	public inline function iterator():BitsIterator;
-}
+/**
+	* Iterator over the positions of non-zero bits
+	*/
+public inline function iterator():BitsIterator;
 ```
