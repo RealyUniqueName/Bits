@@ -4,8 +4,8 @@
 	"license"      : "MIT",
 	"tags"         : ["binary", "bitwise", "bits", "flags"],
 	"description"  : "Binary bit flags with unlimited amount of bits.",
-	"version"      : "1.2.0",
-	"releasenote"  : "Bits.iterator()",
+	"version"      : "1.3.0",
+	"releasenote"  : "Bits.count(); `capactiy` argument for the constructor to pre-allocate memory",
 	"classPath"    : "src",
 	"contributors" : ["RealyUniqueName"],
 	"dependencies" : {}
