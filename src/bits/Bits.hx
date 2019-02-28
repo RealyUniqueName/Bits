@@ -1,5 +1,6 @@
 package bits;
 
+import haxe.io.BytesData;
 /**
  * A sequence of bits of any size.
  */
@@ -18,8 +19,19 @@ abstract Bits(BitsData) from BitsData to BitsData {
 		return bits;
 	}
 
-	public inline function new() {
+	/**
+	 * Create a new instance.
+	 *
+	 * By default the new instance allocates a memory for 32 (on most platforms) bits.
+	 * And then grows as necessary on setting bits at positions greater than 31.
+	 *
+	 * @param capacity makes `bits.Bits` to pre-allocate the amount of memory required to store `capacity` bits.
+	 */
+	public inline function new(capacity:Int = 0) {
 		this = new BitsData();
+		if(capacity > 0) {
+			this.resize(Math.ceil(capacity / BitsData.CELL_SIZE));
+		}
 	}
 
 	/**
@@ -163,13 +175,20 @@ abstract Bits(BitsData) from BitsData to BitsData {
 	 */
 	public function isEmpty():Bool {
 		var empty = true;
-		for(cell in 0...this.length) {
-			if(this[cell] != 0) {
+		for(cellValue in this) {
+			if(cellValue != 0) {
 				empty = false;
 				break;
 			}
 		}
 		return empty;
+	}
+
+	/**
+	 * Count the amount of non-zero bits.
+	 */
+	public function count():Int {
+		return this.countOnes();
 	}
 
 	/**
@@ -183,6 +202,7 @@ abstract Bits(BitsData) from BitsData to BitsData {
 
 	/**
 	 * Merge this instance with `bits`.
+	 * E.g. merging `10010` and `10001` produces `10011`.
 	 * Creates a new `bits.Bits` instance.
 	 */
 	@:op(A | B)
@@ -204,6 +224,7 @@ abstract Bits(BitsData) from BitsData to BitsData {
 
 	/**
 	 * Returns an intersection of this instance with `bits`.
+	 * E.g. intersecting `10010` and `01010` produces `00010`.
 	 * Creates a new `bits.Bits` instance.
 	 */
 	@:op(A & B)
@@ -291,6 +312,21 @@ abstract BitsData(Array<Int>) {
 
 	public inline function copy():BitsData {
 		return cast this.copy();
+	}
+
+	/**
+	 * Count 1-bits
+	 */
+	public inline function countOnes():Int {
+		var result = 0;
+		for(v in this) {
+			if(v != 0) {
+				v = v - ((v >> 1) & 0x55555555);
+				v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+				result += (((v + (v >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+			}
+		}
+		return result;
 	}
 
 	@:op([])

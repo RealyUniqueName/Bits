@@ -29,6 +29,16 @@ flags.isSet(9999); // true
 @:from static public function fromPositions(positions:Array<Int>):Bits;
 
 /**
+ * Create a new instance.
+ *
+ * By default the new instance allocates a memory for 32 (on most platforms) bits.
+ * And then grows as necessary on setting bits at positions greater than 31.
+ *
+ * @param capacity makes `bits.Bits` to pre-allocate the amount of memory required to store `capacity` bits.
+ */
+public inline function new(capacity:Int = 0);
+
+/**
  * Set the bit at position `pos` (zero-based) in a binary representation of `bits.BitFlags` to 1.
  * It's like `bits = bits | (1 << pos)`
  * E.g. if `pos` is 2 the third bit is set to 1 (`0000100`).
@@ -85,6 +95,11 @@ public inline function copy():Bits;
 public function toString():String;
 
 /**
+ * Count the amount of non-zero bits.
+ */
+public function count():Int;
+
+/**
  * Check if all bits are zeros
  */
 public function isEmpty():Bool;
@@ -96,12 +111,14 @@ public function clear():Void;
 
 /**
  * Merge this instance with `bits`.
+ * E.g. merging `10010` and `10001` produces `10011`.
  * Creates a new `bits.Bits` instance.
  */
 @:op(A | B) public function merge(bits:Bits):Bits;
 
 /**
  * Returns an intersection of this instance with `bits`.
+ * E.g. intersecting `10010` and `01010` produces `00010`.
  * Creates a new `bits.Bits` instance.
  */
 @:op(A & B) public function intersect(bits:Bits):Bits;

@@ -1,5 +1,6 @@
 package bits;
 
+import bits.Bits;
 import utest.Assert;
 
 class TestBits extends utest.Test {
@@ -114,6 +115,27 @@ class TestBits extends utest.Test {
 
 		bits.unset(999999);
 		Assert.isTrue(bits.isEmpty());
+	}
+
+	function testCount() {
+		var bits = new Bits();
+
+		Assert.equals(0, bits.count());
+
+		bits.set(1);
+		bits.set(32);
+		bits.set(131);
+		bits.set(875696);
+		Assert.equals(4, bits.count());
+
+		bits.unset(131);
+		Assert.equals(3, bits.count());
+
+		bits.clear();
+		for(i in 0...BitsData.CELL_SIZE * 10) {
+			bits.set(i);
+		}
+		Assert.equals(BitsData.CELL_SIZE * 10, bits.count());
 	}
 
 	function testFromPositions() {
