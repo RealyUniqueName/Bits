@@ -319,13 +319,25 @@ abstract BitsData(Array<Int>) {
 	 */
 	public inline function countOnes():Int {
 		var result = 0;
-		for(v in this) {
-			if(v != 0) {
-				v = v - ((v >> 1) & 0x55555555);
-				v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
-				result += (((v + (v >> 4)) & 0x0F0F0F0F) * 0x01010101) >> 24;
+		#if (neko || js || java || cs || cpp || flash)
+			for(v in this) {
+				if(v != 0) {
+					v = v - ((v >>> 1) & 0x55555555);
+					v = (v & 0x33333333) + ((v >>> 2) & 0x33333333);
+					result += (((v + (v >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
+				}
 			}
-		}
+		#else
+			for(cellValue in this) {
+				if(cellValue != 0) {
+					for(i in 0...CELL_SIZE) {
+						if(cellValue & (1 << i) != 0) {
+							++result;
+						}
+					}
+				}
+			}
+		#end
 		return result;
 	}
 
